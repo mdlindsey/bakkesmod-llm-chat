@@ -1,9 +1,9 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "GuiBase.h"
 
 std::string SettingsWindowBase::GetPluginName()
 {
-	return "$projectname$";
+	return "LLMChatPlugin";
 }
 
 void SettingsWindowBase::SetImGuiContext(uintptr_t ctx)
@@ -13,7 +13,7 @@ void SettingsWindowBase::SetImGuiContext(uintptr_t ctx)
 
 std::string PluginWindowBase::GetMenuName()
 {
-	return "$projectname$";
+	return "LLMChatPlugin";
 }
 
 std::string PluginWindowBase::GetMenuTitle()
@@ -50,7 +50,6 @@ void PluginWindowBase::Render()
 {
 	if (!ImGui::Begin(menuTitle_.c_str(), &isWindowOpen_, ImGuiWindowFlags_None))
 	{
-		// Early out if the window is collapsed, as an optimization.
 		ImGui::End();
 		return;
 	}

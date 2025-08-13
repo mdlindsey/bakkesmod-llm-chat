@@ -112,9 +112,9 @@ C:\vcpkg\vcpkg.exe install nlohmann-json:x64-windows
 
 ### Installing the plugin for manual testing
 - Copy the built DLL to the BakkesMod plugins folder:
-  - `%AppData%\bakkesmod\bakkesmod\plugins\bakkesmod-llm-chat.dll` (final name may vary; will be aligned during implementation)
+  - `%AppData%\bakkesmod\bakkesmod\plugins\LLMChatPlugin.dll`
 - Load the plugin in-game:
-  - In BakkesMod console: `plugin load bakkesmod-llm-chat`
+  - In BakkesMod console: `plugin load LLMChatPlugin`
   - Or add it to `plugins.cfg` to auto-load.
 - Open F2 to access the plugin's UI panel; set the API key and system prompt.
 
@@ -126,6 +126,8 @@ C:\vcpkg\vcpkg.exe install nlohmann-json:x64-windows
 
 ### Continuous integration and releases
 - GitHub Actions will build the plugin on Windows and produce downloadable artifacts.
+- Prerequisite for CI: the BakkesMod SDK must be present on the runner. The project resolves include/lib paths via the registry key `HKEY_CURRENT_USER\Software\BakkesMod\AppPath@BakkesModPath` (see `BakkesMod.props`).
+  - For CI, we will add a setup step to populate this registry value and cache a copy of the SDK under a known path (e.g., `C:\bakkesmod`). Alternatively, run a one-time script that installs the SDK layout to that path.
 - On pushes and pull requests, the workflow will:
   - Use vcpkg manifest mode to install dependencies (e.g., `nlohmann-json`).
   - Build the `Release|x64` DLL via MSBuild.

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
@@ -75,7 +75,7 @@
     <ClCompile Include="pch.cpp">
       <Filter>PCH</Filter>
     </ClCompile>
-    <ClCompile Include="$projectname$.cpp">
+    <ClCompile Include="plugin.cpp">
       <Filter>Plugin\src</Filter>
     </ClCompile>
     <ClCompile Include="GuiBase.cpp">
@@ -131,7 +131,7 @@
     <ClInclude Include="pch.h">
       <Filter>PCH</Filter>
     </ClInclude>
-    <ClInclude Include="$projectname$.h">
+    <ClInclude Include="plugin.h">
       <Filter>Plugin\header</Filter>
     </ClInclude>
     <ClInclude Include="logging.h">
@@ -142,7 +142,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="UpgradeTest.rc">
+    <ResourceCompile Include="plugin.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>

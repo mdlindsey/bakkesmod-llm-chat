@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "bakkesmod/plugin/PluginSettingsWindow.h"
 #include "bakkesmod/plugin/pluginwindow.h"
 
@@ -15,7 +15,7 @@ public:
 	virtual ~PluginWindowBase() = default;
 
 	bool isWindowOpen_ = false;
-	std::string menuTitle_ = "$projectname$";
+	std::string menuTitle_ = "LLMChatPlugin";
 
 	std::string GetMenuName() override;
 	std::string GetMenuTitle() override;

@@ -9,6 +9,8 @@
 #include <functional>
 #include <memory>
 
+#include <nlohmann/json.hpp>
+
 #include "IMGUI/imgui.h"
 #include "IMGUI/imgui_stdlib.h"
 #include "IMGUI/imgui_searchablecombo.h"
