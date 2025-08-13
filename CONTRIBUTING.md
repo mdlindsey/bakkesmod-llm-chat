@@ -124,6 +124,56 @@ C:\vcpkg\vcpkg.exe install nlohmann-json:x64-windows
 - Logging: Use BakkesMod's logging utilities; avoid noisy public chat on errors.
 - Testing: Manual, in a private match; verify channel mirroring, history size, 120-char cap, and stale-response discard logic.
 
+### Continuous integration and releases
+- GitHub Actions will build the plugin on Windows and produce downloadable artifacts.
+- On pushes and pull requests, the workflow will:
+  - Use vcpkg manifest mode to install dependencies (e.g., `nlohmann-json`).
+  - Build the `Release|x64` DLL via MSBuild.
+  - Upload the built DLL as a workflow artifact (downloadable from the Actions run page).
+- On tagged pushes (e.g., tags like `v1.0.0`), the workflow will:
+  - Create or update a GitHub Release for the tag.
+  - Upload the built DLL (and a ZIP containing the DLL and README snippet) as release assets.
+
+Representative workflow outline (for reference only; actual file will be added under `.github/workflows/build.yml`):
+```yaml
+name: build
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-msbuild@v1.3.2
+      - uses: microsoft/setup-vcpkg@v1
+        with:
+          vcpkg-triplet: x64-windows
+          # Manifest mode auto-installs deps declared in vcpkg.json
+      - name: Build (Release x64)
+        run: msbuild BakkesPluginTemplate.vcxproj /p:Configuration=Release /p:Platform=x64
+      - name: Upload artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bakkesmod-llm-chat-dll
+          path: Release/*.dll
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            Release/*.dll
+```
+
+How to download prebuilt binaries:
+- For tagged releases: navigate to the repository's Releases page and download the DLL from the latest release.
+- For PRs or non-tag builds: open the corresponding Actions run and download the artifact named `bakkesmod-llm-chat-dll`.
+
 ### Implementation plan (sequenced tasks)
 1. Add `vcpkg.json` manifest with `nlohmann-json` dependency and hook up VS manifest mode.
 2. Add CVars for configuration, persistence, and default values.
@@ -135,7 +185,8 @@ C:\vcpkg\vcpkg.exe install nlohmann-json:x64-windows
 8. Parse response, sanitize, enforce 120 char cap; reply to the same channel; prevent re-triggering on self messages.
 9. Add request invalidation logic (monotonic `requestId`) to discard stale responses.
 10. Harden logging and error paths; ensure all errors go to console only.
-11. Validate end-to-end; adjust defaults; document any event names used from RL.
+11. Add GitHub Actions workflow to build on Windows, upload PR artifacts, and publish DLL to GitHub Releases on tags.
+12. Validate end-to-end; adjust defaults; document any event names used from RL.
 
 ### Acceptance criteria
 - Responds only to other players' typed messages; ignores quickchats and local user's messages.
@@ -143,6 +194,7 @@ C:\vcpkg\vcpkg.exe install nlohmann-json:x64-windows
 - Uses the last 10 messages of per-match history (including assistant replies) and resets correctly after match end.
 - No cooldown; stale responses are discarded when a newer message arrives mid-flight.
 - Errors are visible in BakkesMod console; configuration is adjustable via CVars and the F2 panel; settings persist.
+- CI builds succeed on Windows; artifacts are available for PRs; tagged builds publish a DLL to GitHub Releases.
 
 ### Notes and open items
 - Exact RL event names for typed chat and match end will be confirmed against the [BakkesMod plugin wiki](https://wiki.bakkesplugins.com/) during implementation.
